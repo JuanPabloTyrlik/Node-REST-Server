@@ -1,23 +1,33 @@
 const express = require('express');
 const app = express();
 
+const Usuario = require('../model/usuario');
+
 app.get('/usuario', (req, res) => {
     res.json('GetUsuario()');
 });
 
 app.post('/usuario', (req, res) => {
 
-    if (req.body === undefined) {
-        res.status(400).json({
-            ok: false,
-            message: 'Debe proveer el nombre'
-        });
-    } else {
+    let usuario = new Usuario({
+        nombre: req.body.nombre,
+        email: req.body.email,
+        password: req.body.password,
+        role: req.body.role
+    });
+
+    usuario.save((err, usuarioDB) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
         res.json({
-            usuario: req.body,
-            message: 'PostUsuario()'
+            ok: true,
+            usuario: usuarioDB
         });
-    }
+    });
 
 });
 
