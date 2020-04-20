@@ -7,7 +7,28 @@ const Usuario = require('../model/usuario');
 
 
 app.get('/usuario', (req, res) => {
-    res.json('GetUsuario()');
+
+    let limite = Number(req.query.limite) || 5;
+    let desde = Number(req.query.desde) || 0;
+
+    Usuario.find({}, 'nombre email img role estado google')
+        .skip(desde)
+        .limit(limite)
+        .exec((err, usuarios) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+            Usuario.count({}, (err, cant) => {
+                res.json({
+                    ok: true,
+                    total: cant,
+                    usuarios
+                });
+            });
+        });
 });
 
 app.post('/usuario', (req, res) => {
