@@ -11,7 +11,7 @@ app.get('/usuario', (req, res) => {
     let limite = Number(req.query.limite) || 5;
     let desde = Number(req.query.desde) || 0;
 
-    Usuario.find({}, 'nombre email img role estado google')
+    Usuario.find({ estado: true }, 'nombre email img role estado google')
         .skip(desde)
         .limit(limite)
         .exec((err, usuarios) => {
@@ -21,7 +21,7 @@ app.get('/usuario', (req, res) => {
                     err
                 });
             }
-            Usuario.count({}, (err, cant) => {
+            Usuario.count({ estado: true }, (err, cant) => {
                 res.json({
                     ok: true,
                     total: cant,
@@ -77,25 +77,26 @@ app.put('/usuario/:id', (req, res) => {
 app.delete('/usuario/:id', (req, res) => {
 
     let id = req.params.id;
+    // BORRADO FISICO
 
-    Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-        if (!usuarioBorrado) {
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'Usuario no encontrado'
-                }
-            });
-        }
+    // Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => { ... }
+
+    // BORRADO LOGICO 
+
+    Usuario.findByIdAndUpdate(id, { estado: false }, { new: true }, (err, usuarioDeshabilitado) => {
+        if (err) return res.status(400).json({
+            ok: false,
+            err
+        });
+        if (!usuarioDeshabilitado) return res.status(400).json({
+            ok: false,
+            err: {
+                message: 'Usuario no encontrado'
+            }
+        });
         res.json({
             ok: true,
-            usuario: usuarioBorrado
+            usuario: usuarioDeshabilitado
         });
     });
 });
