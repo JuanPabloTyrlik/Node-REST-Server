@@ -12,8 +12,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // import routes
-
 app.use(require('./routes/usuario').app);
+
+mongoose.set('useFindAndModify', false);
 
 mongoose.connect('mongodb://localhost:27017/cafe', {
     useNewUrlParser: true,
