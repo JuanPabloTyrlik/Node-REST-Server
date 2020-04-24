@@ -12,7 +12,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // import routes
-app.use(require('./routes/usuario').app);
+app.use(require('./routes/index').app);
+
 
 mongoose.set('useFindAndModify', false);
 
