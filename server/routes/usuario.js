@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../model/usuario');
-const { verifyToken } = require('../middlewares/authorization');
+const { verifyToken, verifyAdminRole } = require('../middlewares/authorization');
 
 app.get('/usuario', verifyToken, (req, res) => {
 
@@ -31,7 +31,7 @@ app.get('/usuario', verifyToken, (req, res) => {
         });
 });
 
-app.post('/usuario', verifyToken, (req, res) => {
+app.post('/usuario', [verifyToken, verifyAdminRole], (req, res) => {
 
     let usuario = new Usuario({
         nombre: req.body.nombre,
@@ -55,7 +55,7 @@ app.post('/usuario', verifyToken, (req, res) => {
 
 });
 
-app.put('/usuario/:id', verifyToken, (req, res) => {
+app.put('/usuario/:id', [verifyToken, verifyAdminRole], (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -74,7 +74,7 @@ app.put('/usuario/:id', verifyToken, (req, res) => {
     });
 });
 
-app.delete('/usuario/:id', verifyToken, (req, res) => {
+app.delete('/usuario/:id', [verifyToken, verifyAdminRole], (req, res) => {
 
     let id = req.params.id;
     // BORRADO FISICO
