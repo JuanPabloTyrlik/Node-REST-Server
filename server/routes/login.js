@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const Usuario = require('../model/usuario');
 
 app.post('/login', (req, res) => {
@@ -21,13 +22,7 @@ app.post('/login', (req, res) => {
             });
         }
 
-        if (bcrypt.compareSync(req.body.password, usuarioDB.password)) {
-            return res.json({
-                ok: true,
-                usuarioDB,
-                token: '123'
-            });
-        } else {
+        if (!bcrypt.compareSync(req.body.password, usuarioDB.password)) {
             return res.status(400).json({
                 ok: false,
                 err: {
@@ -35,6 +30,18 @@ app.post('/login', (req, res) => {
                 }
             });
         }
+
+        let token = jwt.sign({
+            usuario: usuarioDB
+        }, process.env.TOKEN_SEED, {
+            expiresIn: process.env.TOKEN_EXPIRATION
+        });
+
+        return res.json({
+            ok: true,
+            usuario: usuarioDB,
+            token: token
+        });
     });
 });
 

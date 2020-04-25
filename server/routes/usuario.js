@@ -4,9 +4,9 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const Usuario = require('../model/usuario');
+const { verifyToken } = require('../middlewares/authorization');
 
-
-app.get('/usuario', (req, res) => {
+app.get('/usuario', verifyToken, (req, res) => {
 
     let limite = Number(req.query.limite) || 5;
     let desde = Number(req.query.desde) || 0;
