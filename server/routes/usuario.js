@@ -31,7 +31,7 @@ app.get('/usuario', verifyToken, (req, res) => {
         });
 });
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', verifyToken, (req, res) => {
 
     let usuario = new Usuario({
         nombre: req.body.nombre,
@@ -55,7 +55,7 @@ app.post('/usuario', (req, res) => {
 
 });
 
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', verifyToken, (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -74,7 +74,7 @@ app.put('/usuario/:id', (req, res) => {
     });
 });
 
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', verifyToken, (req, res) => {
 
     let id = req.params.id;
     // BORRADO FISICO
