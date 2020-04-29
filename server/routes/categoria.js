@@ -82,6 +82,23 @@ app.put('/categoria/:id', verifyToken, (req, res) => {
     });
 });
 
+app.delete('/categoria/:id', [verifyToken, verifyAdminRole], (req, res) => {
+    let id = req.params.id;
+
+    Categoria.findByIdAndDelete(id, (err, categoriaDB) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+        res.json({
+            ok: true,
+            categoriaDB
+        });
+    });
+});
+
 module.exports = {
     app
 };
