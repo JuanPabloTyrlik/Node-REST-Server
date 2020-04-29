@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
+const _ = require('underscore');
 
-const { verifyToken } = require('../middlewares/authorization');
+const { verifyToken, verifyAdminRole } = require('../middlewares/authorization');
 
 let Categoria = require('../model/categoria');
 
@@ -61,7 +62,25 @@ app.post('/categoria', verifyToken, (req, res) => {
             categoria: categoriaDB
         });
     });
-})
+});
+
+app.put('/categoria/:id', verifyToken, (req, res) => {
+    let id = req.params.id;
+    let body = _.pick(req.body, ['descripcion']);
+
+    Categoria.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, categoriaDB) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+        res.json({
+            ok: true,
+            categoria: categoriaDB
+        });
+    });
+});
 
 module.exports = {
     app
