@@ -38,6 +38,14 @@ app.get('/categoria/:id', verifyToken, (req, res) => {
                 ok: false,
                 err
             });
+            if (!categoriaDB) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'El ID no existe'
+                    }
+                });
+            }
             res.json({
                 ok: true,
                 categoriaDB
@@ -52,6 +60,12 @@ app.post('/categoria', verifyToken, (req, res) => {
     });
     categoria.save((err, categoriaDB) => {
         if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+        if (!categoriaDB) {
             return res.status(400).json({
                 ok: false,
                 err
@@ -70,6 +84,12 @@ app.put('/categoria/:id', verifyToken, (req, res) => {
 
     Categoria.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, categoriaDB) => {
         if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        }
+        if (!categoriaDB) {
             return res.status(400).json({
                 ok: false,
                 err
@@ -87,9 +107,17 @@ app.delete('/categoria/:id', [verifyToken, verifyAdminRole], (req, res) => {
 
     Categoria.findByIdAndDelete(id, (err, categoriaDB) => {
         if (err) {
-            return res.status(400).json({
+            return res.status(500).json({
                 ok: false,
                 err
+            });
+        }
+        if (!categoriaDB) {
+            return res.status(400).json({
+                ok: false,
+                err: {
+                    message: 'El ID no existe'
+                }
             });
         }
         res.json({
