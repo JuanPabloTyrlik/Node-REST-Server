@@ -29,6 +29,21 @@ app.get('/categoria', verifyToken, (req, res) => {
         });
 });
 
+app.get('/categoria/:id', verifyToken, (req, res) => {
+    let id = req.params.id;
+    Categoria.findById(id)
+        .exec((err, categoriaDB) => {
+            if (err) return res.status(500).json({
+                ok: false,
+                err
+            });
+            res.json({
+                ok: true,
+                categoriaDB
+            });
+        });
+});
+
 module.exports = {
     app
 };
