@@ -13,6 +13,8 @@ app.get('/categoria', verifyToken, (req, res) => {
     Categoria.find({})
         .skip(desde)
         .limit(limite)
+        .sort('descripcion')
+        .populate('usuario', 'nombre email')
         .exec((err, categorias) => {
             if (err) {
                 return res.status(400).json({
