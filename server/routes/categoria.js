@@ -44,6 +44,25 @@ app.get('/categoria/:id', verifyToken, (req, res) => {
         });
 });
 
+app.post('/categoria', verifyToken, (req, res) => {
+    let categoria = new Categoria({
+        descripcion: req.body.descripcion,
+        usuario: req.usuario._id
+    });
+    categoria.save((err, categoriaDB) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+        res.json({
+            ok: true,
+            categoria: categoriaDB
+        });
+    });
+})
+
 module.exports = {
     app
 };
