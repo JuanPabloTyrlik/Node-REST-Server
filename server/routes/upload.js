@@ -3,6 +3,7 @@ const fileUpload = require('express-fileupload');
 const app = express();
 const { verifyToken } = require('../middlewares/authorization');
 const Usuario = require('../model/usuario');
+const Producto = require('../model/producto');
 const fs = require('fs');
 const path = require('path');
 
@@ -62,55 +63,42 @@ app.put('/upload/:tipo/:id', verifyToken, (req, res) => {
                 ok: false,
                 err
             });
-
-
-        imagenUsuario(id, res, nombreArchivo);
-
-        // res.json({
-        //     ok: true,
-        //     message: 'Archivo subido correctamente',
-        //     archivo: {
-        //         nombre: nombreArchivo,
-        //         extension
-        //     }
-        // });
+        subirImagen(id, res, nombreArchivo, tipo);
     });
 });
 
-function imagenUsuario(id, res, nombreArchivo) {
-    Usuario.findById(id, (err, usuarioDB) => {
+function subirImagen(id, res, nombreArchivo, tipo) {
+    let schemas = {
+        usuario: Usuario,
+        producto: Producto
+    };
+    let schema = schemas[tipo];
+    schema.findById(id, (err, schemaDB) => {
         if (err) {
-            borrarArchivo('usuario', nombreArchivo);
+            borrarArchivo(tipo, nombreArchivo);
             return res.status(500).json({
                 ok: false,
                 err
             });
         }
-        if (!usuarioDB) {
-            borrarArchivo('usuario', nombreArchivo);
+        if (!schemaDB) {
+            borrarArchivo(tipo, nombreArchivo);
             return res.status(400).json({
                 ok: false,
                 err: {
-                    message: 'Usuario no encontrado'
+                    message: 'ID no encontrado'
                 }
             });
         }
-
-        borrarArchivo('usuario', usuarioDB.img);
-
-        usuarioDB.img = nombreArchivo;
-
-        usuarioDB.save((err, usuarioGuardado) => {
+        borrarArchivo(tipo, schemaDB.img);
+        schemaDB.img = nombreArchivo;
+        schemaDB.save((err, schemaGuardado) => {
             res.json({
                 ok: true,
-                usuarioDB
+                [`${ tipo }`]: schemaGuardado
             });
         });
     });
-}
-
-function imagenProduto() {
-
 }
 
 function borrarArchivo(tipo, nombreImg) {
