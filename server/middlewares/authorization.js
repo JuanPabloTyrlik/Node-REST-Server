@@ -33,7 +33,26 @@ const verifyAdminRole = (req, res, next) => {
     next();
 };
 
+const verifyTokenUrl = (req, res, next) => {
+    let token = req.query.Auth;
+
+    jwt.verify(token, process.env.TOKEN_SEED, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                err: {
+                    message: 'Token inválido'
+                }
+            });
+        }
+
+        req.usuario = decoded.usuario;
+        next();
+    });
+};
+
 module.exports = {
     verifyToken,
-    verifyAdminRole
+    verifyAdminRole,
+    verifyTokenUrl
 };

@@ -2,9 +2,9 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const path = require('path');
-const { verifyToken } = require('../middlewares/authorization');
+const { verifyTokenUrl } = require('../middlewares/authorization');
 
-app.get('/imagen/:tipo/:img', verifyToken, (req, res) => {
+app.get('/imagen/:tipo/:img', verifyTokenUrl, (req, res) => {
     let tipo = req.params.tipo;
     let img = req.params.img;
 
